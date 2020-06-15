@@ -1,0 +1,87 @@
+#!/usr/bin/env php
+<?php
+
+if ( ! isset($argv[1]) || ! is_file($argv[1])) {
+    exit('Invalid filename.');
+}
+//else
+
+function is_row(string $line, string $column_delimiter) {
+    return strpos($line, $column_delimiter) !== FALSE;
+}
+
+function is_row_delimiter(string $line, string $row_delimiter) {
+    // only $row_delimiter: /^[\-]+$/
+    $row_delimiter_pattern = "/^[\\$row_delimiter]+$/";
+    return preg_match($row_delimiter_pattern, trim($line));
+}
+
+const COLUMN_DELIMITER = '|';
+const ROW_DELIMITER = '-';
+const COLUMN_PADDING_LENGTH = 2; // for both left and right
+
+$filename = $argv[1];
+$lines = file($filename);
+
+//$tables = []; // to support multiple tables in one file
+$table = [];
+$column_lengths = [];
+$column_max_count = 1;
+
+foreach ($lines as $line) {
+    if (is_row_delimiter($line, ROW_DELIMITER)) {
+        $table[] = ROW_DELIMITER;
+        continue;
+    }
+
+    if ( ! is_row($line, COLUMN_DELIMITER)) {
+        $table[] = $line;
+        continue;
+    }
+    // else is_row
+
+    $columns = explode(COLUMN_DELIMITER, $line);
+
+    $column_count = count($columns);
+    if ($column_count > $column_max_count) {
+        $column_max_count = $column_count;
+    }
+
+    foreach ($columns as $key => &$column) {
+        $column = trim($column);
+        $column_length = strlen($column);
+        if ( ! isset($column_lengths[$key]) 
+            || ($column_length > $column_lengths[$key])
+        ) {
+            $column_lengths[$key] = $column_length;
+        }
+    } // foreach $columns
+
+    $table[] = $columns;
+} // foreach $lines
+
+$row_length = array_sum($column_lengths) 
+            + ($column_max_count - 1) 
+            + ($column_max_count * COLUMN_PADDING_LENGTH * 2);
+foreach ($table as $row) {
+    if (ROW_DELIMITER === $row) {
+        echo str_repeat(ROW_DELIMITER, $row_length) . PHP_EOL;
+        continue;
+    }
+    // else
+
+    if ( ! is_array($row)) {
+        echo $row;
+        continue;
+    }
+    // else is_array
+    foreach ($row as $key => &$column) {
+        $column = str_pad(
+            $column, 
+            $column_lengths[$key] + COLUMN_PADDING_LENGTH * 2,
+            ' ',
+            STR_PAD_BOTH
+        );
+    }
+    echo implode(COLUMN_DELIMITER, $row) . PHP_EOL;
+}
