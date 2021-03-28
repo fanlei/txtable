@@ -28,6 +28,7 @@ $table = [];
 $column_lengths = [];
 $column_max_count = 1;
 
+// Building table
 foreach ($lines as $line) {
     if (is_row_delimiter($line, ROW_DELIMITER)) {
         $table[] = ROW_DELIMITER;
@@ -63,6 +64,8 @@ foreach ($lines as $line) {
 $row_length = array_sum($column_lengths) 
             + ($column_max_count - 1) 
             + ($column_max_count * COLUMN_PADDING_LENGTH * 2);
+
+// Output table
 foreach ($table as $row) {
     if (ROW_DELIMITER === $row) {
         echo str_repeat(ROW_DELIMITER, $row_length) . PHP_EOL;
