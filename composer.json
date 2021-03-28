@@ -1,0 +1,22 @@
+{
+    "name": "codegear/txtable",
+    "version": "1.0.0",
+    "time": "2019-06-29",
+    "type": "tool",
+    "description": "A simple tool to generate plain text tables",
+    "keywords": ["text", "table"],
+    "homepage": "https://github.com/whitephp/txtable",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "Lei Fan",
+            "email": "self@whitephp.net",
+            "homepage": "https://whitephp.net",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0"
+    },
+    "bin": ["./bin/txtable"]
+}
